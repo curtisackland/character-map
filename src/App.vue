@@ -23,9 +23,11 @@
             Currently selected font: {{ font }}
           </div>
         </v-row>
+        <v-row class="ml-0">
+          <h4>Character Selection</h4>
+        </v-row>
         <v-row>
           <v-col cols="7">
-            <h4>Character Selection</h4>
             <v-virtual-scroll :items="['1']" style="height: 60vh;">
               <table class="w-100">
                 <tbody>
@@ -188,7 +190,7 @@ export default {
     },
     getAllCharacters() {
       let chars = [];
-      for (let i = 0; i < 150000; i++) {
+      for (let i = 0; i < 1500; i++) {
         chars.push(String.fromCharCode(i));
       }
       return chars;
