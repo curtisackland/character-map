@@ -25,8 +25,19 @@
         </v-row>
         <v-row>
           <v-col cols="7">
-            <!-- Character Grid should go here -->
-            Character Grid should go here
+            <h4>Character Selection</h4>
+            <v-virtual-scroll :items="['1']" style="height: 60vh;">
+              <table class="w-100">
+                <tbody>
+                  <tr class="main-character-select-row p-0" v-for="row in getListAsTable(getAllCharacters(), 20, 40)">
+                    <td class="main-character-select-data p-0" v-for="character in row">
+                      <v-btn v-if="character != null" rounded="0" class="main-character-select-grid-button no-uppercase p-0 border-1" density="compact" @click="setCurrentCharacter(character)">{{character}}</v-btn>
+                      <v-btn v-else rounded="0" class="main-character-select-grid-button no-uppercase p-0 border-1" density="compact">&nbsp;</v-btn>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </v-virtual-scroll>
           </v-col>
           <v-col cols="5">
             <v-card class="p-4">
@@ -95,9 +106,38 @@
         </v-row>
         <v-row>
           <v-col cols="7">
-            <!-- Favourites and Recently used should go here -->
-            Favourites and Recently used should go here
-            {{ favourites }}
+            <v-row>
+              <v-col class="mr-2">
+                <h4>Favourites</h4>
+                <v-virtual-scroll :items="['1']" style="height: 15vh;">
+                  <table class="w-100">
+                    <tbody>
+                      <tr class="lower-character-select-row p-0" v-for="row in getListAsTable(favourites, 10, 4)">
+                        <td class="lower-character-select-data p-0" v-for="character in row">
+                          <v-btn v-if="character != null" rounded="0" class="lower-character-select-grid-button no-uppercase p-0 border-1" density="compact" @click="setCurrentCharacter(character)">{{character}}</v-btn>
+                          <v-btn v-else rounded="0" class="lower-character-select-grid-button no-uppercase p-0 border-1" density="compact">&nbsp;</v-btn>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </v-virtual-scroll>
+              </v-col>
+              <v-col class="ml-2">
+                <h4>Recents</h4>
+                <v-virtual-scroll :items="['1']" style="height: 15vh;">
+                  <table class="w-100">
+                    <tbody>
+                      <tr class="lower-character-select-row p-0" v-for="row in getListAsTable(characterHistory, 10, 4)">
+                        <td class="lower-character-select-data p-0" v-for="character in row">
+                          <v-btn v-if="character != null" rounded="0" class="lower-character-select-grid-button no-uppercase p-0 border-1" density="compact" @click="setCurrentCharacter(character)">{{character}}</v-btn>
+                          <v-btn v-else rounded="0" class="lower-character-select-grid-button no-uppercase p-0 border-1" density="compact">&nbsp;</v-btn>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </v-virtual-scroll>
+              </v-col>
+            </v-row>
           </v-col>
           <v-col cols="5" class="p-4">
             <v-row>
@@ -127,13 +167,14 @@ export default {
   },
   methods: {
     addToFavourites(character) {
-      this.favourites.push(character);
+      this.favourites.unshift(character);
     },
     removeFromFavourites(characterToRemove) {
       this.favourites = this.favourites.filter(char => char !== characterToRemove)
     },
     addCharacter(character) {
       this.selectedCharacters += character;
+      this.characterHistory.unshift(character);
     },
     clearSelectedCharacters() {
       this.selectedCharacters = '';
@@ -145,6 +186,31 @@ export default {
         this.copyToolTipText = 'Copy to clipboard';
       }, 1000);
     },
+    getAllCharacters() {
+      let chars = [];
+      for (let i = 0; i < 150000; i++) {
+        chars.push(String.fromCharCode(i));
+      }
+      return chars;
+    },
+    getListAsTable(list, columns, minRows) {
+      let table = [];
+      for (let i = 0; i * columns < list.length || i < minRows; i++) {
+        table.push([]);
+        for (let j = 0; j < columns; j++) {
+          if (i * columns + j < list.length) {
+            table[table.length - 1].push(list[i * columns + j]);
+          } else {
+            table[table.length - 1].push(null);
+          }
+        }
+      }
+      return table;
+    },
+    setCurrentCharacter(char) {
+      this.currentCharacter.character = char;
+      // TODO: update other parts of currentCharacter
+    }
   },
   data() {
     return {
@@ -155,6 +221,7 @@ export default {
         { text: 'Test Font 3', value: 'Test3' },
       ],
       selectedCharacters: '',
+      characterHistory: [],
       currentCharacter: {
         character: '$',
         keyStroke: 'Shift + 4',
@@ -227,6 +294,44 @@ export default {
 
 .selected-characters-field {
   height: 80px;
+}
+
+.main-character-select-row {
+  width: 100%;
+
+}
+
+.main-character-select-data {
+  width: 5%;
+}
+
+.main-character-select-grid-button {
+  width: 100%;
+  height: auto;
+  min-width: 0.5em; /*Need to override vue default*/
+  aspect-ratio: 1;
+  font-size: 100%
+}
+
+.lower-character-select-row {
+  width: 100%;
+
+}
+
+.lower-character-select-data {
+  width: 10%;
+}
+
+.lower-character-select-grid-button {
+  width: 100%;
+  height: auto;
+  min-width: 0.5em; /*Need to override vue default*/
+  aspect-ratio: 1;
+  font-size: 100%
+}
+
+.no-uppercase {
+  text-transform: unset;
 }
 
 /* Custom scrollbar styles */
