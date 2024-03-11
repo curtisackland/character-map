@@ -5,36 +5,105 @@
     </v-app-bar>
     <v-main>
       <v-container>
-        <v-row class="d-flex justify-center align-center mt-2">
-          <!-- Search/dropdown filters should go here -->
-          Search/dropdown filters should go here
-          <div class="test">
+        <v-row>
+          <v-col cols="6">
             <v-select
-                label="Fonts"
-                v-model="font"
-                :items="fontOptions"
-                item-title="text"
-                item-value="value"
-                class="mr-4"
+              searchable
+              label="Search For Font"
+              :items="[
+                'Font 1',
+                'Font 2',
+                'Font 3',
+                'Font 4',
+                'Font 5',
+                'Font 6',
+              ]"
             ></v-select>
-          </div>
-          <v-btn>Test</v-btn>
-          <div class="d-flex justify-center">
-            Currently selected font: {{ font }}
-          </div>
+          </v-col>
+          <v-col cols="6">
+            <v-select
+              searchable
+              label="Search Character By Name Or Unicode"
+              :items="['A', 'B', 'C', 'D', 'E', 'F']"
+            ></v-select>
+          </v-col>
         </v-row>
+
+        <v-row>
+          <v-col cols="6">
+            <v-select
+              searchable
+              label="Group By Option"
+              :items="[
+                'Option 1',
+                'Option 2',
+                'Option 3',
+                'Option 4',
+                'Option 5',
+                'Option 6',
+              ]"
+            ></v-select>
+          </v-col>
+          <v-col cols="5">
+            <v-select
+              searchable
+              label="Group By Option Subrange Option"
+              :items="[
+                'Option 7',
+                'Option 8',
+                'Option 9',
+                'Option 10',
+                'Option 11',
+                'Option 12',
+              ]"
+            ></v-select>
+          </v-col>
+          <v-col cols="1" class="text-center" style="height: 100%">
+            <v-icon
+              size="40"
+              color="white"
+              icon="mdi-information-outline"
+            ></v-icon>
+          </v-col>
+        </v-row>
+
+        <v-row>
+          <v-col cols="12">
+            <v-container class="group-by-options-view"> </v-container>
+          </v-col>
+        </v-row>
+
         <v-row class="ml-0">
           <h4>Character Selection</h4>
         </v-row>
         <v-row>
           <v-col cols="7">
-            <v-virtual-scroll :items="['1']" style="height: 60vh;">
+            <v-virtual-scroll :items="['1']" style="height: 60vh">
               <table class="w-100">
                 <tbody>
-                  <tr class="main-character-select-row p-0" v-for="row in getListAsTable(getAllCharacters(), 20, 40)">
-                    <td class="main-character-select-data p-0" v-for="character in row">
-                      <v-btn v-if="character != null" rounded="0" class="main-character-select-grid-button no-uppercase p-0 border-1" density="compact" @click="setCurrentCharacter(character)">{{character}}</v-btn>
-                      <v-btn v-else rounded="0" class="main-character-select-grid-button no-uppercase p-0 border-1" density="compact">&nbsp;</v-btn>
+                  <tr
+                    class="main-character-select-row p-0"
+                    v-for="row in getListAsTable(getAllCharacters(), 20, 40)"
+                  >
+                    <td
+                      class="main-character-select-data p-0"
+                      v-for="character in row"
+                    >
+                      <v-btn
+                        v-if="character != null"
+                        rounded="0"
+                        class="main-character-select-grid-button no-uppercase p-0 border-1"
+                        density="compact"
+                        @click="setCurrentCharacter(character)"
+                        >{{ character }}</v-btn
+                      >
+                      <v-btn
+                        v-else
+                        rounded="0"
+                        class="main-character-select-grid-button no-uppercase p-0 border-1"
+                        density="compact"
+                        >&nbsp;</v-btn
+                      >
                     </td>
                   </tr>
                 </tbody>
@@ -45,8 +114,16 @@
             <v-card class="p-4">
               <v-row>
                 <v-col>
-                  <v-card class="d-flex preview-background align-center justify-center">
-                    <div :class="{ 'bold-font': bold, 'italicize-font': italicize, 'underline-font': underline }">
+                  <v-card
+                    class="d-flex preview-background align-center justify-center"
+                  >
+                    <div
+                      :class="{
+                        'bold-font': bold,
+                        'italicize-font': italicize,
+                        'underline-font': underline,
+                      }"
+                    >
                       {{ currentCharacter.character }}
                     </div>
                   </v-card>
@@ -59,9 +136,7 @@
               </v-row>
               <v-row>
                 <v-col>
-                  <v-card-title class="p-0 mb-2">
-                    Information:
-                  </v-card-title>
+                  <v-card-title class="p-0 mb-2"> Information: </v-card-title>
                   <v-card-title class="p-0">
                     Keystroke: {{ currentCharacter.keyStroke }}
                   </v-card-title>
@@ -70,35 +145,50 @@
                   </v-card-title>
                 </v-col>
                 <v-col>
-                  <v-card-title class="mb-2 p-0">
-                    Groups:
-                  </v-card-title>
-                  <v-virtual-scroll style="display: flex; height: 70px" :items="currentCharacter.groups">
+                  <v-card-title class="mb-2 p-0"> Groups: </v-card-title>
+                  <v-virtual-scroll
+                    style="display: flex; height: 70px"
+                    :items="currentCharacter.groups"
+                  >
                     <template v-slot:default="{ item }">
-                      {{ item }} <br>
+                      {{ item }} <br />
                     </template>
                   </v-virtual-scroll>
                 </v-col>
               </v-row>
               <v-row>
                 <v-col class="d-flex align-center justify-center">
-                  <v-btn text="Add to Selected Characters" class="add-button" @click="addCharacter(currentCharacter.character)" />
+                  <v-btn
+                    text="Add to Selected Characters"
+                    class="add-button"
+                    @click="addCharacter(currentCharacter.character)"
+                  />
                 </v-col>
                 <v-col class="d-flex align-center justify-center">
                   <v-tooltip
-                      v-if="favourites.includes(currentCharacter.character)"
-                      text="Remove from favourites"
-                      location="right">
+                    v-if="favourites.includes(currentCharacter.character)"
+                    text="Remove from favourites"
+                    location="right"
+                  >
                     <template v-slot:activator="{ props }">
-                      <v-icon v-bind="props" icon="mdi-bookmark" style="font-size: 5em" @click="removeFromFavourites(currentCharacter.character)"></v-icon>
+                      <v-icon
+                        v-bind="props"
+                        icon="mdi-bookmark"
+                        style="font-size: 5em"
+                        @click="
+                          removeFromFavourites(currentCharacter.character)
+                        "
+                      ></v-icon>
                     </template>
                   </v-tooltip>
-                  <v-tooltip
-                      v-else
-                      text="Add to favourites"
-                      location="right">
+                  <v-tooltip v-else text="Add to favourites" location="right">
                     <template v-slot:activator="{ props }">
-                      <v-icon v-bind="props" icon="mdi-bookmark-outline" style="font-size: 5em" @click="addToFavourites(currentCharacter.character)"></v-icon>
+                      <v-icon
+                        v-bind="props"
+                        icon="mdi-bookmark-outline"
+                        style="font-size: 5em"
+                        @click="addToFavourites(currentCharacter.character)"
+                      ></v-icon>
                     </template>
                   </v-tooltip>
                 </v-col>
@@ -111,13 +201,32 @@
             <v-row>
               <v-col class="mr-2">
                 <h4>Favourites</h4>
-                <v-virtual-scroll :items="['1']" style="height: 15vh;">
+                <v-virtual-scroll :items="['1']" style="height: 15vh">
                   <table class="w-100">
                     <tbody>
-                      <tr class="lower-character-select-row p-0" v-for="row in getListAsTable(favourites, 10, 4)">
-                        <td class="lower-character-select-data p-0" v-for="character in row">
-                          <v-btn v-if="character != null" rounded="0" class="lower-character-select-grid-button no-uppercase p-0 border-1" density="compact" @click="setCurrentCharacter(character)">{{character}}</v-btn>
-                          <v-btn v-else rounded="0" class="lower-character-select-grid-button no-uppercase p-0 border-1" density="compact">&nbsp;</v-btn>
+                      <tr
+                        class="lower-character-select-row p-0"
+                        v-for="row in getListAsTable(favourites, 10, 4)"
+                      >
+                        <td
+                          class="lower-character-select-data p-0"
+                          v-for="character in row"
+                        >
+                          <v-btn
+                            v-if="character != null"
+                            rounded="0"
+                            class="lower-character-select-grid-button no-uppercase p-0 border-1"
+                            density="compact"
+                            @click="setCurrentCharacter(character)"
+                            >{{ character }}</v-btn
+                          >
+                          <v-btn
+                            v-else
+                            rounded="0"
+                            class="lower-character-select-grid-button no-uppercase p-0 border-1"
+                            density="compact"
+                            >&nbsp;</v-btn
+                          >
                         </td>
                       </tr>
                     </tbody>
@@ -126,13 +235,32 @@
               </v-col>
               <v-col class="ml-2">
                 <h4>Recents</h4>
-                <v-virtual-scroll :items="['1']" style="height: 15vh;">
+                <v-virtual-scroll :items="['1']" style="height: 15vh">
                   <table class="w-100">
                     <tbody>
-                      <tr class="lower-character-select-row p-0" v-for="row in getListAsTable(characterHistory, 10, 4)">
-                        <td class="lower-character-select-data p-0" v-for="character in row">
-                          <v-btn v-if="character != null" rounded="0" class="lower-character-select-grid-button no-uppercase p-0 border-1" density="compact" @click="setCurrentCharacter(character)">{{character}}</v-btn>
-                          <v-btn v-else rounded="0" class="lower-character-select-grid-button no-uppercase p-0 border-1" density="compact">&nbsp;</v-btn>
+                      <tr
+                        class="lower-character-select-row p-0"
+                        v-for="row in getListAsTable(characterHistory, 10, 4)"
+                      >
+                        <td
+                          class="lower-character-select-data p-0"
+                          v-for="character in row"
+                        >
+                          <v-btn
+                            v-if="character != null"
+                            rounded="0"
+                            class="lower-character-select-grid-button no-uppercase p-0 border-1"
+                            density="compact"
+                            @click="setCurrentCharacter(character)"
+                            >{{ character }}</v-btn
+                          >
+                          <v-btn
+                            v-else
+                            rounded="0"
+                            class="lower-character-select-grid-button no-uppercase p-0 border-1"
+                            density="compact"
+                            >&nbsp;</v-btn
+                          >
                         </td>
                       </tr>
                     </tbody>
@@ -143,12 +271,23 @@
           </v-col>
           <v-col cols="5" class="p-4">
             <v-row>
-              <v-text-field v-model="selectedCharacters" label="Selected Characters" hide-details clearable @click:clear="clearSelectedCharacters" class="mr-2 selected-characters-field">
+              <v-text-field
+                v-model="selectedCharacters"
+                label="Selected Characters"
+                hide-details
+                clearable
+                @click:clear="clearSelectedCharacters"
+                class="mr-2 selected-characters-field"
+              >
               </v-text-field>
-              <v-tooltip :text="copyToolTipText"
-                         location="bottom">
+              <v-tooltip :text="copyToolTipText" location="bottom">
                 <template v-slot:activator="{ props }">
-                  <v-btn v-bind="props" text="Copy" class="add-button" @click="copySelectedCharacters" />
+                  <v-btn
+                    v-bind="props"
+                    text="Copy"
+                    class="add-button"
+                    @click="copySelectedCharacters"
+                  />
                 </template>
               </v-tooltip>
             </v-row>
@@ -163,29 +302,31 @@
 import Header from "@/components/Header.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    Header
+    Header,
   },
   methods: {
     addToFavourites(character) {
       this.favourites.unshift(character);
     },
     removeFromFavourites(characterToRemove) {
-      this.favourites = this.favourites.filter(char => char !== characterToRemove)
+      this.favourites = this.favourites.filter(
+        (char) => char !== characterToRemove
+      );
     },
     addCharacter(character) {
       this.selectedCharacters += character;
       this.characterHistory.unshift(character);
     },
     clearSelectedCharacters() {
-      this.selectedCharacters = '';
+      this.selectedCharacters = "";
     },
     copySelectedCharacters() {
       navigator.clipboard.writeText(this.selectedCharacters);
-      this.copyToolTipText = 'Characters copied to clipboard!'
+      this.copyToolTipText = "Characters copied to clipboard!";
       setTimeout(() => {
-        this.copyToolTipText = 'Copy to clipboard';
+        this.copyToolTipText = "Copy to clipboard";
       }, 1000);
     },
     getAllCharacters() {
@@ -212,38 +353,38 @@ export default {
     setCurrentCharacter(char) {
       this.currentCharacter.character = char;
       // TODO: update other parts of currentCharacter
-    }
+    },
   },
   data() {
     return {
-      font: 'Test1',
+      font: "Test1",
       fontOptions: [
-        { text: 'Test Font 1', value: 'Test1' },
-        { text: 'Test Font 2', value: 'Test2' },
-        { text: 'Test Font 3', value: 'Test3' },
+        { text: "Test Font 1", value: "Test1" },
+        { text: "Test Font 2", value: "Test2" },
+        { text: "Test Font 3", value: "Test3" },
       ],
-      selectedCharacters: '',
+      selectedCharacters: "",
       characterHistory: [],
       currentCharacter: {
-        character: '$',
-        keyStroke: 'Shift + 4',
-        unicode: 'U+0024',
+        character: "$",
+        keyStroke: "Shift + 4",
+        unicode: "U+0024",
         groups: [
-          'Basic Latin',
-          'Currency Symbol',
-          'Currency Symbol2',
-          'Currency Symbol3',
-          'Currency Symbol4',
-        ]
+          "Basic Latin",
+          "Currency Symbol",
+          "Currency Symbol2",
+          "Currency Symbol3",
+          "Currency Symbol4",
+        ],
       },
       bold: false,
       italicize: false,
       underline: false,
       favourites: [],
-      copyToolTipText: 'Copy to clipboard',
-    }
-  }
-}
+      copyToolTipText: "Copy to clipboard",
+    };
+  },
+};
 </script>
 
 <style scoped>
@@ -258,6 +399,13 @@ export default {
 
 .v-card-title {
   white-space: normal;
+}
+
+.group-by-options-view {
+  border: 1px solid white;
+  height: 100px;
+  width: 100%;
+  margin-bottom: 20px;
 }
 
 .test {
@@ -300,7 +448,6 @@ export default {
 
 .main-character-select-row {
   width: 100%;
-
 }
 
 .main-character-select-data {
@@ -312,12 +459,11 @@ export default {
   height: auto;
   min-width: 0.5em; /*Need to override vue default*/
   aspect-ratio: 1;
-  font-size: 100%
+  font-size: 100%;
 }
 
 .lower-character-select-row {
   width: 100%;
-
 }
 
 .lower-character-select-data {
@@ -329,7 +475,7 @@ export default {
   height: auto;
   min-width: 0.5em; /*Need to override vue default*/
   aspect-ratio: 1;
-  font-size: 100%
+  font-size: 100%;
 }
 
 .no-uppercase {
