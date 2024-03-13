@@ -315,7 +315,10 @@ export default {
     },
     addCharacter(character) {
       this.selectedCharacters += character;
-      this.characterHistory.unshift(character);
+      if (!this.characterHistory.includes(character))
+      {
+        this.characterHistory.unshift(character);
+      }
     },
     clearSelectedCharacters() {
       this.selectedCharacters = "";
