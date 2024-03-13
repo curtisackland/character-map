@@ -76,12 +76,12 @@
         </v-row>
         <v-row>
           <v-col cols="7">
-            <v-virtual-scroll :items="['1']" style="height: 60vh">
+            <v-virtual-scroll v-if="characterData" :items="['1']" style="height: 60vh">
               <table class="w-100">
                 <tbody>
                   <tr
                     class="main-character-select-row p-0"
-                    v-for="row in getListAsTable(getAllCharacters(), 20, 40)"
+                    v-for="row in getListAsTable(characterData, 20, 40)"
                   >
                     <td
                       class="main-character-select-data p-0"
@@ -93,7 +93,7 @@
                         class="main-character-select-grid-button no-uppercase p-0 border-1"
                         density="compact"
                         @click="setCurrentCharacter(character)"
-                        >{{ character }}</v-btn
+                        >{{ String.fromCharCode(parseInt(character['@cp'],16)) }}</v-btn
                       >
                       <v-btn
                         v-else
@@ -110,6 +110,11 @@
           </v-col>
           <v-col cols="5">
             <v-card class="p-4">
+              <v-row class="justify-center">
+                <v-card-title>
+                  {{ currentCharacter['@na'] ?? 'No Name Found' }}
+                </v-card-title>
+              </v-row>
               <v-row>
                 <v-col>
                   <v-card
@@ -122,7 +127,7 @@
                         'underline-font': underline,
                       }"
                     >
-                      {{ currentCharacter.character }}
+                      {{ String.fromCharCode(parseInt(currentCharacter['@cp'],16)) }}
                     </div>
                   </v-card>
                 </v-col>
@@ -136,10 +141,10 @@
                 <v-col>
                   <v-card-title class="p-0 mb-2"> Information: </v-card-title>
                   <v-card-title class="p-0">
-                    Keystroke: {{ currentCharacter.keyStroke }}
+                    Keystroke: {{ currentCharacter['@ks'] ?? 'No keystroke found.' }}
                   </v-card-title>
                   <v-card-title class="p-0">
-                    Unicode: {{ currentCharacter.unicode }}
+                    Unicode: {{ 'U+' + currentCharacter['@cp'] }}
                   </v-card-title>
                 </v-col>
                 <v-col>
@@ -159,12 +164,12 @@
                   <v-btn
                     text="Add to Selected Characters"
                     class="add-button"
-                    @click="addCharacter(currentCharacter.character)"
+                    @click="addCharacter(currentCharacter)"
                   />
                 </v-col>
                 <v-col class="d-flex align-center justify-center">
                   <v-tooltip
-                    v-if="favourites.includes(currentCharacter.character)"
+                    v-if="favourites.includes(currentCharacter)"
                     text="Remove from favourites"
                     location="right"
                   >
@@ -174,7 +179,7 @@
                         icon="mdi-bookmark"
                         style="font-size: 5em"
                         @click="
-                          removeFromFavourites(currentCharacter.character)
+                          removeFromFavourites(currentCharacter)
                         "
                       ></v-icon>
                     </template>
@@ -185,7 +190,7 @@
                         v-bind="props"
                         icon="mdi-bookmark-outline"
                         style="font-size: 5em"
-                        @click="addToFavourites(currentCharacter.character)"
+                        @click="addToFavourites(currentCharacter)"
                       ></v-icon>
                     </template>
                   </v-tooltip>
@@ -216,7 +221,7 @@
                             class="lower-character-select-grid-button no-uppercase p-0 border-1"
                             density="compact"
                             @click="setCurrentCharacter(character)"
-                            >{{ character }}</v-btn
+                            >{{ String.fromCharCode(parseInt(character['@cp'], 16)) }}</v-btn
                           >
                           <v-btn
                             v-else
@@ -250,7 +255,7 @@
                             class="lower-character-select-grid-button no-uppercase p-0 border-1"
                             density="compact"
                             @click="setCurrentCharacter(character)"
-                            >{{ character }}</v-btn
+                            >{{ String.fromCharCode(parseInt(character['@cp'], 16)) }}</v-btn
                           >
                           <v-btn
                             v-else
@@ -298,6 +303,7 @@
 
 <script>
 import Header from "@/components/Header.vue";
+import data from "./character_data.json"
 
 export default {
   name: "App",
@@ -314,7 +320,7 @@ export default {
       );
     },
     addCharacter(character) {
-      this.selectedCharacters += character;
+      this.selectedCharacters += String.fromCharCode(parseInt(character['@cp'], 16));
       if (!this.characterHistory.includes(character))
       {
         this.characterHistory.unshift(character);
@@ -329,13 +335,6 @@ export default {
       setTimeout(() => {
         this.copyToolTipText = "Copy to clipboard";
       }, 1000);
-    },
-    getAllCharacters() {
-      let chars = [];
-      for (let i = 0; i < 1500; i++) {
-        chars.push(String.fromCharCode(i));
-      }
-      return chars;
     },
     getListAsTable(list, columns, minRows) {
       let table = [];
@@ -352,9 +351,19 @@ export default {
       return table;
     },
     setCurrentCharacter(char) {
-      this.currentCharacter.character = char;
+      this.currentCharacter = char;
       // TODO: update other parts of currentCharacter
     },
+    async getCharacters() {
+      for (let i = 0; i < data.ucd.repertoire.group.length; i++) {
+        if (data.ucd.repertoire.group[i].char) {
+          for (let j = 0; j < data.ucd.repertoire.group[i].char.length; j++) {
+            this.characterData.push(data.ucd.repertoire.group[i].char[j]);
+          }
+        }
+      }
+      this.characterData = this.characterData.slice(0, 1000);
+    }
   },
   data() {
     return {
@@ -367,24 +376,34 @@ export default {
       selectedCharacters: "",
       characterHistory: [],
       currentCharacter: {
-        character: "$",
-        keyStroke: "Shift + 4",
-        unicode: "U+0024",
-        groups: [
-          "Basic Latin",
-          "Currency Symbol",
-          "Currency Symbol2",
-          "Currency Symbol3",
-          "Currency Symbol4",
-        ],
+        "@cp": "0041",
+        "@na": "LATIN CAPITAL LETTER A",
+        "@gc": "Lu",
+        "@slc": "0061",
+        "@lc": "0061",
+        "@scf": "0061",
+        "@cf": "0061",
+        "@Upper": "Y",
+        "@Hex": "Y",
+        "@AHex": "Y",
+        "@SB": "UP",
+        "@CWCF": "Y",
+        "@CWKCF": "Y",
+        "@CWL": "Y",
+        "@NFKC_CF": "0061",
+        "@NFKC_SCF": "0061"
       },
       bold: false,
       italicize: false,
       underline: false,
       favourites: [],
       copyToolTipText: "Copy to clipboard",
+      characterData: [],
     };
   },
+  mounted() {
+    this.getCharacters();
+  }
 };
 </script>
 
