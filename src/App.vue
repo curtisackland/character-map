@@ -21,11 +21,9 @@
             ></v-select>
           </v-col>
           <v-col cols="6">
-            <v-select
-              searchable
+            <v-text-field
               label="Search Character By Name Or Unicode"
-              :items="['A', 'B', 'C', 'D', 'E', 'F']"
-            ></v-select>
+            ></v-text-field>
           </v-col>
         </v-row>
 
