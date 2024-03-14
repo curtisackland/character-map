@@ -79,31 +79,34 @@
             <v-virtual-scroll v-if="characterData" :items="['1']" style="height: 60vh">
               <table class="w-100">
                 <tbody>
-                  <tr
-                    class="main-character-select-row p-0"
-                    v-for="row in getListAsTable(characterData, 20, 40)"
-                  >
-                    <td
-                      class="main-character-select-data p-0"
-                      v-for="character in row"
-                    >
-                      <v-btn
-                        v-if="character != null"
-                        rounded="0"
-                        class="main-character-select-grid-button no-uppercase p-0 border-1"
-                        density="compact"
-                        @click="setCurrentCharacter(character)"
-                        >{{ String.fromCharCode(parseInt(character['@cp'],16)) }}</v-btn
+                  <v-lazy
+                      v-for="row in getListAsTable(characterData, 20, 40)"
+                      :min-height="10"
+                      :options="{'threshold':0}"
+                      class="main-character-select-row p-0">
+                    <tr class="d-flex main-character-select-row p-0">
+                      <td
+                        class="main-character-select-data p-0"
+                        v-for="character in row"
                       >
-                      <v-btn
-                        v-else
-                        rounded="0"
-                        class="main-character-select-grid-button no-uppercase p-0 border-1"
-                        density="compact"
-                        >&nbsp;</v-btn
-                      >
-                    </td>
-                  </tr>
+                        <v-btn
+                          v-if="character != null"
+                          rounded="0"
+                          class="main-character-select-grid-button no-uppercase p-0 border-1"
+                          density="compact"
+                          @click="setCurrentCharacter(character)"
+                          >{{ character['symbol'] }}</v-btn
+                        >
+                        <v-btn
+                          v-else
+                          rounded="0"
+                          class="main-character-select-grid-button no-uppercase p-0 border-1"
+                          density="compact"
+                          >&nbsp;</v-btn
+                        >
+                      </td>
+                    </tr>
+                  </v-lazy>
                 </tbody>
               </table>
             </v-virtual-scroll>
@@ -118,7 +121,7 @@
               <v-row>
                 <v-col>
                   <v-card
-                    class="d-flex preview-background align-center justify-center"
+                    class="d-flex preview-background align-center justify-center h-100"
                   >
                     <div
                       :class="{
@@ -127,7 +130,7 @@
                         'underline-font': underline,
                       }"
                     >
-                      {{ String.fromCharCode(parseInt(currentCharacter['@cp'],16)) }}
+                      {{ currentCharacter['symbol'] }}
                     </div>
                   </v-card>
                 </v-col>
@@ -221,7 +224,7 @@
                             class="lower-character-select-grid-button no-uppercase p-0 border-1"
                             density="compact"
                             @click="setCurrentCharacter(character)"
-                            >{{ String.fromCharCode(parseInt(character['@cp'], 16)) }}</v-btn
+                            >{{ character['symbol'] }}</v-btn
                           >
                           <v-btn
                             v-else
@@ -255,7 +258,7 @@
                             class="lower-character-select-grid-button no-uppercase p-0 border-1"
                             density="compact"
                             @click="setCurrentCharacter(character)"
-                            >{{ String.fromCharCode(parseInt(character['@cp'], 16)) }}</v-btn
+                            >{{ character['symbol'] }}</v-btn
                           >
                           <v-btn
                             v-else
@@ -320,7 +323,7 @@ export default {
       );
     },
     addCharacter(character) {
-      this.selectedCharacters += String.fromCharCode(parseInt(character['@cp'], 16));
+      this.selectedCharacters += character['symbol'];
       if (!this.characterHistory.includes(character))
       {
         this.characterHistory.unshift(character);
@@ -352,17 +355,21 @@ export default {
     },
     setCurrentCharacter(char) {
       this.currentCharacter = char;
-      // TODO: update other parts of currentCharacter
     },
     async getCharacters() {
       for (let i = 0; i < data.ucd.repertoire.group.length; i++) {
         if (data.ucd.repertoire.group[i].char) {
           for (let j = 0; j < data.ucd.repertoire.group[i].char.length; j++) {
-            this.characterData.push(data.ucd.repertoire.group[i].char[j]);
+            let temp = {};
+            temp['@cp'] = data.ucd.repertoire.group[i].char[j]['@cp'];
+            temp['symbol'] = String.fromCharCode(parseInt(data.ucd.repertoire.group[i].char[j]['@cp'], 16));
+            temp['@ks'] = data.ucd.repertoire.group[i].char[j]['@ks'];
+            temp['@na'] = data.ucd.repertoire.group[i].char[j]['@na'];
+            temp['@gc'] = data.ucd.repertoire.group[i].char[j]['@gc'];
+            this.characterData.push(temp);
           }
         }
       }
-      this.characterData = this.characterData.slice(0, 1000);
     }
   },
   data() {
@@ -376,22 +383,10 @@ export default {
       selectedCharacters: "",
       characterHistory: [],
       currentCharacter: {
+        "symbol": "A",
         "@cp": "0041",
         "@na": "LATIN CAPITAL LETTER A",
         "@gc": "Lu",
-        "@slc": "0061",
-        "@lc": "0061",
-        "@scf": "0061",
-        "@cf": "0061",
-        "@Upper": "Y",
-        "@Hex": "Y",
-        "@AHex": "Y",
-        "@SB": "UP",
-        "@CWCF": "Y",
-        "@CWKCF": "Y",
-        "@CWL": "Y",
-        "@NFKC_CF": "0061",
-        "@NFKC_SCF": "0061"
       },
       bold: false,
       italicize: false,
@@ -504,7 +499,7 @@ export default {
 
 /* Custom scrollbar styles */
 .v-virtual-scroll::-webkit-scrollbar {
-  width: 3px;
+  width: 8px;
 }
 
 .v-virtual-scroll::-webkit-scrollbar-thumb {
