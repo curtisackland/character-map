@@ -95,6 +95,7 @@
                           class="main-character-select-grid-button no-uppercase p-0 border-1"
                           density="compact"
                           @click="setCurrentCharacter(character)"
+                          @dblclick="addCharacter(character)"
                           >{{ character['symbol'] }}</v-btn
                         >
                         <v-btn
