@@ -366,7 +366,14 @@ export default {
             temp['symbol'] = String.fromCharCode(parseInt(data.ucd.repertoire.group[i].char[j]['@cp'], 16));
             temp['@ks'] = data.ucd.repertoire.group[i].char[j]['@ks'];
             temp['@na'] = data.ucd.repertoire.group[i].char[j]['@na'];
-            temp['@gc'] = data.ucd.repertoire.group[i].char[j]['@gc'];
+
+            temp['groups'] = [];
+            if (data.ucd.repertoire.group[i].char[j]['@gc']) {
+              temp['groups'].push(data.ucd.repertoire.group[i].char[j]['@gc'])
+            } else {
+              temp['groups'].push(data.ucd.repertoire.group[i]['@gc']);
+            }
+            temp['groups'].push(data.ucd.repertoire.group[i]['@blk']);
             this.characterData.push(temp);
           }
         }
@@ -387,6 +394,7 @@ export default {
         "symbol": "A",
         "@cp": "0041",
         "@na": "LATIN CAPITAL LETTER A",
+        "groups": ["Lu", "ASCII"],
         "@gc": "Lu",
       },
       bold: false,
