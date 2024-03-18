@@ -76,7 +76,7 @@
         </v-row>
         <v-row>
           <v-col cols="7">
-            <v-virtual-scroll v-if="characterData" :items="getListAsTable(characterData, 20, 12)" style="display:flex; flex-wrap: wrap; height: 60vh" class="character-grid">
+            <v-virtual-scroll v-if="characterData" :items="getListAsTable(characterData, 20, 12)" style="display:flex; flex-wrap: wrap; height: 610px" class="character-grid">
               <template class="w-100" v-slot="{ item }">
                 <v-btn-group
                   divided
@@ -129,7 +129,7 @@
                 <v-col>
                   <v-card-title class="p-0 mb-2"> Information: </v-card-title>
                   <v-card-title class="p-0">
-                    Keystroke: {{ currentCharacter['@ks'] ?? 'No keystroke found.' }}
+                    Keystroke: {{ currentCharacter['@ks'] ? 'ALT+' + currentCharacter['@ks'] : 'None' }}
                   </v-card-title>
                   <v-card-title class="p-0">
                     Unicode: {{ 'U+' + currentCharacter['@cp'] }}
@@ -185,10 +185,31 @@
                 </v-col>
               </v-row>
             </v-card>
+            <v-row class="m-0 mt-2">
+              <v-text-field
+                  v-model="selectedCharacters"
+                  label="Selected Characters"
+                  hide-details
+                  clearable
+                  @click:clear="clearSelectedCharacters"
+                  class="mr-2 selected-characters-field"
+              >
+              </v-text-field>
+              <v-tooltip :text="copyToolTipText" location="bottom">
+                <template v-slot:activator="{ props }">
+                  <v-btn
+                      v-bind="props"
+                      text="Copy"
+                      class="add-button"
+                      @click="copySelectedCharacters"
+                  />
+                </template>
+              </v-tooltip>
+            </v-row>
           </v-col>
         </v-row>
         <v-row>
-          <v-col cols="7">
+          <v-col>
             <v-row>
               <v-col class="mr-2">
                 <h4>Favourites</h4>
@@ -258,29 +279,6 @@
                   </table>
                 </v-virtual-scroll>
               </v-col>
-            </v-row>
-          </v-col>
-          <v-col cols="5" class="p-4">
-            <v-row>
-              <v-text-field
-                v-model="selectedCharacters"
-                label="Selected Characters"
-                hide-details
-                clearable
-                @click:clear="clearSelectedCharacters"
-                class="mr-2 selected-characters-field"
-              >
-              </v-text-field>
-              <v-tooltip :text="copyToolTipText" location="bottom">
-                <template v-slot:activator="{ props }">
-                  <v-btn
-                    v-bind="props"
-                    text="Copy"
-                    class="add-button"
-                    @click="copySelectedCharacters"
-                  />
-                </template>
-              </v-tooltip>
             </v-row>
           </v-col>
         </v-row>
