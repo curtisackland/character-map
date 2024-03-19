@@ -45,7 +45,6 @@
                 'Hebrew',
                 'Japanese Hiragana and Katakana',
                 'Latin',
-                'Tagalog',
                 'Thai',
                 'Unicode Subrange',
               ]"
@@ -96,12 +95,6 @@
               color="white"
               icon="mdi-information-outline"
             ></v-icon>
-          </v-col>
-        </v-row>
-
-        <v-row>
-          <v-col cols="12">
-            <v-container class="group-by-options-view"> </v-container>
           </v-col>
         </v-row>
 
@@ -404,9 +397,6 @@ export default {
           "Latin_Ext_B", "Latin_Ext_C", "Latin_Ext_D",
           "Latin_Ext_E", "Latin_Ext_F", "Latin_Ext_G"
           ];
-          break;
-        case "Tagalog":
-          groupString = ["Tagalog"];
           break;
         case "Thai":
           groupString = ["Thai"];
