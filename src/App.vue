@@ -32,28 +32,61 @@
             <v-select
               searchable
               label="Group By Option"
+              v-model="groupOption"
               :items="[
-                'Option 1',
-                'Option 2',
-                'Option 3',
-                'Option 4',
-                'Option 5',
-                'Option 6',
+                'All',
+                'Arabic',
+                'Armenian',
+                'CJK',
+                'Cyrillic',
+                'Georgian',
+                'Greek',
+                'Korean',
+                'Hebrew',
+                'Japanese Hiragana and Katakana',
+                'Latin',
+                'Thai',
+                'Unicode Subrange',
               ]"
+              @update:modelValue="groupByOption"
             ></v-select>
           </v-col>
           <v-col cols="5">
             <v-select
               searchable
               label="Group By Option Subrange Option"
+              v-model="groupSubrangeOption"
+              :disabled="!enableSubrange"
               :items="[
-                'Option 7',
-                'Option 8',
-                'Option 9',
-                'Option 10',
-                'Option 11',
-                'Option 12',
+                'All',
+                'Control',
+                'Format',
+                'Lowercase Letter',
+                'Modifier Letter',
+                'Other Letter',
+                'Uppercase Letter',
+                'Spacing Mark',
+                'Enclosing Mark',
+                'Nonspacing Mark',
+                'Decimal Number',
+                'Letter Number',
+                'Other Number',
+                'Connector Punctuation',
+                'Dash Punctuation',
+                'Close Punctuation',
+                'Final Punctuation',
+                'Initial Punctuation',
+                'Other Punctuation',
+                'Open Punctuation',
+                'Currency Symbol',
+                'Modifier Symbol',
+                'Math Symbol',
+                'Other Symbol',
+                'Line Separator',
+                'Paragraph Separator',
+                'Space Separator',
               ]"
+              @update:modelValue="groupByOptionSubrange"
             ></v-select>
           </v-col>
           <v-col cols="1" class="text-center" style="height: 100%">
@@ -62,12 +95,6 @@
               color="white"
               icon="mdi-information-outline"
             ></v-icon>
-          </v-col>
-        </v-row>
-
-        <v-row>
-          <v-col cols="12">
-            <v-container class="group-by-options-view"> </v-container>
           </v-col>
         </v-row>
 
@@ -80,7 +107,7 @@
               <table class="w-100">
                 <tbody>
                   <v-lazy
-                      v-for="row in getListAsTable(characterData, 20, 40)"
+                      v-for="row in getListAsTable(groupCharacterData, 20, 40)"
                       :min-height="10"
                       :options="{'threshold':0}"
                       class="main-character-select-row p-0">
@@ -315,6 +342,188 @@ export default {
     Header,
   },
   methods: {
+    groupByOption(){
+
+      this.enableSubrange = false;
+      let temp = [];
+      let groupString = []
+
+      switch(this.groupOption){
+        case "All":
+          this.groupCharacterData = this.characterData;
+          break;
+        case "Arabic":
+          groupString = [
+          "Arabic", "Arabic_Ext_A", "Arabic_Ext_B",
+          "Arabic_Ext_C", "Arabic_Math", "Arabic_PF_A",
+          "Arabic_PF_B", "Arabic_Sup"
+          ];
+          break;
+        case "Armenian":
+          groupString = ["Armenian"];
+          break;
+        case "CJK":
+          groupString = [
+            "CJK", "CJK_Compat", "CJK_Compat_Forms", "CJK_Compat_Ideographs",
+            "CJK_Compat_Ideographs_Sup", "CJK_Ext_A", "CJK_Ext_B", "CJK_Ext_C",
+            "CJK_Ext_D", "CJK_Ext_E", "CJK_Ext_F", "CJK_Ext_G","CJK_Ext_H",
+            "CJK_Ext_I", "CJK_Radicals_Sup", "CJK_Strokes", "CJK_Symbols"
+          ];
+          break;
+        case "Cyrillic":
+          groupString = [
+          "Cyrillic", "Cyrillic_Ext_A", "Cyrillic_Ext_B",
+          "Cyrillic_Ext_C", "Cyrillic_Ext_D", "Cyrillic_Sup"
+          ];
+          break;
+        case "Georgian":
+          groupString = ["Georgian", "Georgian_Ext", "Georgian_Sup"];
+          break;
+        case "Greek":
+          groupString = ["Greek", "Greek_Ext"];
+          break;
+        case "Korean":
+          groupString = ["Hangul"];
+          break;
+        case "Hebrew":
+          groupString = ["Hebrew"];
+          break;
+        case "Japanese Hiragana and Katakana":
+          groupString = ["Hiragana", "Katakana", "Katakana_Ext"];
+          break;
+        case "Latin":
+          groupString = [
+          "Latin_1_Sup", "Latin_Ext_A", "Latin_Ext_Additional",
+          "Latin_Ext_B", "Latin_Ext_C", "Latin_Ext_D",
+          "Latin_Ext_E", "Latin_Ext_F", "Latin_Ext_G"
+          ];
+          break;
+        case "Thai":
+          groupString = ["Thai"];
+          break;
+        case "Unicode Subrange":
+          this.enableSubrange = true;
+          this.groupByOptionSubrange();
+          break;
+      }
+
+      if ((this.groupOption != "Unicode Subrange") && (this.groupOption != "All")){
+        for (let i = 0; i < this.characterData.length; i++){
+          if (this.characterData[i]['groups'].some(r=>groupString.includes(r))){
+            temp.push(this.characterData[i]);
+          }
+        }
+        this.groupCharacterData = temp;
+      }
+
+    },
+    groupByOptionSubrange(){
+
+      let temp = [];
+      let groupString = []
+
+      switch(this.groupSubrangeOption){
+        case "All":
+          groupString = [
+          "Cc", "Cf", "Ll", "Lm", "Lo",
+          "Lt", "Lu", "Mc", "Me", "Mn",
+          "Nd", "Nl", "No", "Pc", "Pd",
+          "Pe", "Pf", "Pi", "Po", "Ps",
+          "Sc", "Sk", "Sm", "So", "Zl",
+          "Zp", "Zs"
+          ];
+          break;
+        case "Control":
+          groupString = ["Cc"];
+          break;
+        case "Format":
+          groupString = ["Cf"];
+          break;
+        case "Lowercase Letter":
+          groupString = ["Ll"];
+          break;
+        case "Modifier Letter":
+          groupString = ["Lm"];
+          break;
+        case "Other Letter":
+          groupString = ["Lo"];
+          break;
+        case "Titlecase Letter":
+          groupString = ["Lt"];
+          break;
+        case "Uppercase Letter":
+          groupString = ["Lu"];
+          break;
+        case "Spacing Mark":
+          groupString = ["Mc"];
+          break;
+        case "Enclosing Mark":
+          groupString = ["Me"];
+          break;
+        case "Nonspacing Mark":
+          groupString = ["Mn"];
+          break;
+        case "Decimal Number":
+          groupString = ["Nd"];
+          break;
+        case "Letter Number":
+          groupString = ["Nl"];
+          break;
+        case "Other Number":
+          groupString = ["No"];
+          break;
+        case "Connector Punctuation":
+          groupString = ["Pc"];
+          break;
+        case "Dash Punctuation":
+          groupString = ["Pd"];
+          break;
+        case "Close Punctuation":
+          groupString = ["Pe"];
+          break;
+        case "Final Punctuation":
+          groupString = ["Pf"];
+          break;
+        case "Initial Punctuation":
+          groupString = ["Pi"];
+          break;
+        case "Other Punctuation":
+          groupString = ["Po"];
+          break;
+        case "Open Punctuation":
+          groupString = ["Ps"];
+          break;
+        case "Currency Symbol":
+          groupString = ["Sc"];
+          break;
+        case "Modifier Symbol":
+          groupString = ["Sk"];
+          break;
+        case "Math Symbol":
+          groupString = ["Sm"];
+          break;
+        case "Other Symbol":
+          groupString = ["So"];
+          break;
+        case "Line Separator":
+          groupString = ["Zl"];
+          break;
+        case "Paragraph Separator":
+          groupString = ["Zp"];
+          break;
+        case "Space Separator":
+          groupString = ["Zs"];
+          break;
+      }
+
+      for (let i = 0; i < this.characterData.length; i++){
+        if (this.characterData[i]['groups'].some(r=>groupString.includes(r))){
+          temp.push(this.characterData[i]);
+        }
+      }
+      this.groupCharacterData = temp;
+
+    },
     addToFavourites(character) {
       this.favourites.unshift(character);
     },
@@ -378,6 +587,7 @@ export default {
           }
         }
       }
+      this.groupCharacterData = this.characterData;
     }
   },
   data() {
@@ -403,6 +613,10 @@ export default {
       favourites: [],
       copyToolTipText: "Copy to clipboard",
       characterData: [],
+      groupOption: "All",
+      groupSubrangeOption: "All",
+      enableSubrange: false,
+      groupCharacterData: [],
     };
   },
   mounted() {
