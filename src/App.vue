@@ -179,7 +179,25 @@
                   </v-card-title>
                 </v-col>
                 <v-col>
-                  <v-card-title class="mb-2 p-0"> Groups: </v-card-title>
+                  <v-card-title class="mb-2 p-0">
+                    Groups:&nbsp;&nbsp;
+                    <v-tooltip
+                        location="top"
+                        close-delay="1000"
+                        width="25%"
+                    >
+                      <template v-slot:activator="{ props }">
+                        <v-icon
+                            v-bind="props"
+                            icon="mdi-information-outline"
+                        ></v-icon>
+                      </template>
+                      <span>
+                        For more information on character groups and what they mean, visit:
+                        <a href="https://en.wikipedia.org/wiki/Unicode_block#List_of_blocks" target="_blank">https://en.wikipedia.org/wiki/Unicode_block#List_of_blocks</a>
+                      </span>
+                    </v-tooltip>
+                  </v-card-title>
                   <v-virtual-scroll
                     style="display: flex; height: 70px"
                     :items="currentCharacter.groups"
@@ -577,10 +595,24 @@ export default {
             temp['@na'] = data.ucd.repertoire.group[i].char[j]['@na'];
 
             temp['groups'] = [];
+            const groupMap = { "Cc": "Control", "Cf": "Format", "Ll": "Lowercase Letter", "Lm": "Modifier Letter", "Lo": "Other Letter",
+              "Lt": "Titlecase Letter", "Lu": "Uppercase Letter", "Mc": "Spacing Mark", "Me": "Enclosing Mark", "Mn": "Nonspacing Mark",
+              "Nd": "Decimal Number", "Nl": "Letter Number", "No": "Other Number", "Pc": "Connector Punctuation", "Pd": "Dash Punctuation",
+              "Pe": "Close Punctuation", "Pf": "Final Punctuation", "Pi": "Initial Punctuation", "Po": "Other Punctuation", "Ps": "Open Punctuation",
+              "Sc": "Currency Symbol", "Sk": "Modifier Symbol", "Sm": "Math Symbol", "So": "Other Symbol", "Zl": "Line Separator",
+              "Zp": "Paragraph Separator", "Zs": "Space Separator"};
             if (data.ucd.repertoire.group[i].char[j]['@gc']) {
-              temp['groups'].push(data.ucd.repertoire.group[i].char[j]['@gc'])
+              if (data.ucd.repertoire.group[i].char[j]['@gc'] in groupMap) {
+                temp['groups'].push(groupMap[data.ucd.repertoire.group[i].char[j]['@gc']]);
+              } else {
+                temp['groups'].push(data.ucd.repertoire.group[i].char[j]['@gc']);
+              }
             } else {
-              temp['groups'].push(data.ucd.repertoire.group[i]['@gc']);
+              if (data.ucd.repertoire.group[i]['@gc'] in groupMap) {
+                temp['groups'].push(groupMap[data.ucd.repertoire.group[i]['@gc']]);
+              } else {
+                temp['groups'].push(data.ucd.repertoire.group[i]['@gc']);
+              }
             }
             temp['groups'].push(data.ucd.repertoire.group[i]['@blk']);
             this.characterData.push(temp);
@@ -604,7 +636,7 @@ export default {
         "symbol": "A",
         "@cp": "0041",
         "@na": "LATIN CAPITAL LETTER A",
-        "groups": ["Lu", "ASCII"],
+        "groups": ["Uppercase Letter", "ASCII"],
         "@gc": "Lu",
       },
       bold: false,
@@ -646,13 +678,12 @@ export default {
   margin-bottom: 20px;
 }
 
-.test {
-  width: 250px;
+.v-tooltip :deep(.v-overlay__content) {
+  pointer-events: initial;
 }
 
 .preview-background {
   padding: 16px;
-  //background-color: #2B2B2B;
   background-color: white;
   color: black;
   font-size: 7em;
