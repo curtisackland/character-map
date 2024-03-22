@@ -75,7 +75,7 @@
           <h4>Character Selection</h4>
         </v-row>
         <v-row>
-          <v-col cols="7">
+          <v-col class="character-grid-col" cols="7">
             <v-virtual-scroll v-if="characterData" :items="getListAsTable(characterData, 20, 12)" style="display:flex; flex-wrap: wrap; height: 610px" class="character-grid">
               <template class="w-100" v-slot="{ item }">
                 <v-btn-group
@@ -96,7 +96,7 @@
               </template>
             </v-virtual-scroll>
           </v-col>
-          <v-col cols="5">
+          <v-col>
             <v-card class="p-4">
               <v-row class="justify-center">
                 <v-card-title>
@@ -213,75 +213,66 @@
             <v-row>
               <v-col class="mr-2">
                 <h4>Favourites</h4>
-                <v-virtual-scroll :items="['1']" style="height: 15vh">
-                  <table class="w-100">
-                    <tbody>
-                      <tr
-                        class="lower-character-select-row p-0"
-                        v-for="row in getListAsTable(favourites, 10, 4)"
-                      >
-                        <td
-                          class="lower-character-select-data p-0"
-                          v-for="character in row"
-                        >
-                          <v-btn
-                            v-if="character != null"
-                            rounded="0"
-                            class="lower-character-select-grid-button no-uppercase p-0 border-1"
-                            density="compact"
-                            @click="setCurrentCharacter(character)"
-                            >{{ character['symbol'] }}</v-btn
-                          >
-                          <v-btn
-                            v-else
-                            rounded="0"
-                            class="lower-character-select-grid-button no-uppercase p-0 border-1"
-                            density="compact"
-                            >&nbsp;</v-btn
-                          >
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                <v-virtual-scroll v-if="characterData" :items="getListAsTable(favourites, 10, 2)" style="display:flex; flex-wrap: wrap; height: 610px" class="character-grid">
+                  <template class="w-100" v-slot="{ item }">
+                    <v-btn-group
+                        divided
+                        rounded="0"
+                        class="w-100 h-100"
+                    >
+                      <v-btn
+                          v-for="character in item"
+                          rounded="0"
+                          density="compact"
+                          class="grid-buttons no-uppercase border-1"
+                          @click="setCurrentCharacter(character ?? null)"
+                          @dblclick="addCharacter(character ?? null)">
+                        {{ character ? character['symbol'] : ' ' }}
+                      </v-btn>
+                    </v-btn-group>
+                  </template>
                 </v-virtual-scroll>
               </v-col>
               <v-col class="ml-2">
                 <h4>Recents</h4>
-                <v-virtual-scroll :items="['1']" style="height: 15vh">
-                  <table class="w-100">
-                    <tbody>
-                      <tr
-                        class="lower-character-select-row p-0"
-                        v-for="row in getListAsTable(characterHistory, 10, 4)"
-                      >
-                        <td
-                          class="lower-character-select-data p-0"
-                          v-for="character in row"
-                        >
-                          <v-btn
-                            v-if="character != null"
-                            rounded="0"
-                            class="lower-character-select-grid-button no-uppercase p-0 border-1"
-                            density="compact"
-                            @click="setCurrentCharacter(character)"
-                            >{{ character['symbol'] }}</v-btn
-                          >
-                          <v-btn
-                            v-else
-                            rounded="0"
-                            class="lower-character-select-grid-button no-uppercase p-0 border-1"
-                            density="compact"
-                            >&nbsp;</v-btn
-                          >
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+                <v-virtual-scroll v-if="characterData" :items="getListAsTable(characterHistory, 10, 2)" style="display:flex; flex-wrap: wrap; height: 610px" class="character-grid">
+                  <template class="w-100" v-slot="{ item }">
+                    <v-btn-group
+                        divided
+                        rounded="0"
+                        class="w-100 h-100"
+                    >
+                      <v-btn
+                          v-for="character in item"
+                          rounded="0"
+                          density="compact"
+                          class="grid-buttons no-uppercase border-1"
+                          @click="setCurrentCharacter(character ?? null)"
+                          @dblclick="addCharacter(character ?? null)">
+                        {{ character ? character['symbol'] : ' ' }}
+                      </v-btn>
+                    </v-btn-group>
+                  </template>
                 </v-virtual-scroll>
               </v-col>
             </v-row>
           </v-col>
         </v-row>
+        <v-snackbar
+            v-model="characterAddedSnackbarActive"
+        >
+          Character was added: {{ characterAddedSnackbarLetter["symbol"] }}
+
+          <template v-slot:actions>
+            <v-btn
+                color="pink"
+                variant="text"
+                @click="characterAddedSnackbarActive = false"
+            >
+              Close
+            </v-btn>
+          </template>
+        </v-snackbar>
       </v-container>
     </v-main>
   </v-app>
@@ -309,12 +300,16 @@ export default {
       if (character == null) {
         return
       }
-
+      this.addCharSnackbar(character);
       this.selectedCharacters += character['symbol'];
       if (!this.characterHistory.includes(character))
       {
         this.characterHistory.unshift(character);
       }
+    },
+    addCharSnackbar(character) {
+      this.characterAddedSnackbarActive = true;
+      this.characterAddedSnackbarLetter = character;
     },
     clearSelectedCharacters() {
       this.selectedCharacters = "";
@@ -388,6 +383,8 @@ export default {
       bold: false,
       italicize: false,
       underline: false,
+      characterAddedSnackbarActive: false,
+      characterAddedSnackbarLetter: false,
       favourites: [],
       copyToolTipText: "Copy to clipboard",
       characterData: [],
@@ -469,6 +466,9 @@ export default {
   aspect-ratio: 1;
   font-size: 100%;
 }
+.character-grid-col {
+  min-width: 700px;
+}
 
 .character-grid >>> .v-virtual-scroll__container {
   width: 100%;
@@ -478,7 +478,6 @@ export default {
   flex: 1;
   width: 5%;
   min-width: 5%;
-  max-width: 5%;
   height: auto;
   aspect-ratio: 1;
 }
