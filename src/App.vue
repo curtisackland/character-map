@@ -19,7 +19,8 @@
               v-model="searchForCharacter"
               label="Search Character By Name Or Unicode"
               :clearable="true"
-              @update:modelValue="groupByOption"
+              @click:clear="groupByOption"
+              @input="handleInput"
             ></v-text-field>
           </v-col>
         </v-row>
@@ -640,6 +641,13 @@ export default {
         }
       }
       this.groupCharacterData = this.characterData;
+    },
+    handleInput() {
+      clearTimeout(this.searchTimeout);
+
+      this.searchTimeout = setTimeout(() => {
+        this.groupByOption();
+      }, 500)
     }
   },
   data() {
@@ -678,6 +686,7 @@ export default {
       enableSubrange: false,
       groupCharacterData: [],
       searchForCharacter: "",
+      searchTimeout: null,
     };
   },
   mounted() {
