@@ -7,12 +7,12 @@
       <v-container>
         <v-row>
           <v-col cols="6">
-            <v-select
+            <v-autocomplete
               v-model="font"
               searchable
               label="Search For Font"
               :items="fontOptions"
-            ></v-select>
+            ></v-autocomplete>
           </v-col>
           <v-col cols="6">
             <v-text-field
