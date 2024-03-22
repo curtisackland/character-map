@@ -94,7 +94,11 @@
             ></v-icon>
           </v-col>
         </v-row>
-
+        <v-row>
+          <v-alert v-if="groupCharacterData.length === 0" type="error">
+            No results
+          </v-alert>
+        </v-row>
         <v-row class="ml-0">
           <h4>Character Selection</h4>
         </v-row>
@@ -305,21 +309,22 @@
             </v-row>
           </v-col>
         </v-row>
-        <v-snackbar
-            v-model="characterAddedSnackbarActive"
-        >
-          Character was added: {{ characterAddedSnackbarLetter["symbol"] }}
-
-          <template v-slot:actions>
-            <v-btn
-                color="pink"
-                variant="text"
-                @click="characterAddedSnackbarActive = false"
-            >
-              Close
-            </v-btn>
-          </template>
-        </v-snackbar>
+        <div class="snackbar-container d-flex justify-center align-bottom">
+          <v-card class="snackbar-card rounded-2 w-50 m-2">
+            <v-row>
+              <v-col cols="10">
+                <v-card-title>
+                  Character added: {{ characterAddedSnackbarLetter }}
+                </v-card-title>
+              </v-col>
+              <v-col cols="2">
+                <v-btn class="m-1" @click="closeSnackbar()">
+                  Close
+                </v-btn>
+              </v-col>
+            </v-row>
+          </v-card>
+        </div>
       </v-container>
     </v-main>
   </v-app>
@@ -551,8 +556,18 @@ export default {
       }
     },
     addCharSnackbar(character) {
-      this.characterAddedSnackbarActive = true;
-      this.characterAddedSnackbarLetter = character;
+      this.characterAddedSnackbarLetter = character["symbol"];
+      this.characterAddedSnackbarVisibility = "visible";
+      this.characterAddedSnackbarLastOpen = Date.now();
+      window.setTimeout(this.closeSnackbarTimerCallback, 3000)
+    },
+    closeSnackbarTimerCallback() {
+      if (this.characterAddedSnackbarLastOpen + 3001 < Date.now()) {
+        this.closeSnackbar();
+      }
+    },
+    closeSnackbar() {
+      this.characterAddedSnackbarVisibility='hidden';
     },
     clearSelectedCharacters() {
       this.selectedCharacters = "";
@@ -652,8 +667,9 @@ export default {
       bold: false,
       italicize: false,
       underline: false,
-      characterAddedSnackbarActive: false,
       characterAddedSnackbarLetter: false,
+      characterAddedSnackbarVisibility: "hidden",
+      characterAddedSnackbarLastOpen: 0,
       favourites: [],
       copyToolTipText: "Copy to clipboard",
       characterData: [],
@@ -743,6 +759,24 @@ export default {
   aspect-ratio: 1;
   font-size: 100%;
 }
+
+.snackbar-container {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2000;
+  pointer-events: none;
+  align-items: flex-end;
+}
+
+.snackbar-card {
+  height: 3em;
+  pointer-events: initial;
+  visibility: v-bind(characterAddedSnackbarVisibility);
+}
+
 .character-grid-col {
   min-width: 700px;
 }
