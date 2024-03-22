@@ -49,51 +49,68 @@
               @update:modelValue="groupByOption"
             ></v-select>
           </v-col>
-          <v-col cols="5">
-            <v-select
-              searchable
-              label="Group By Option Subrange Option"
-              v-model="groupSubrangeOption"
-              :disabled="!enableSubrange"
-              :items="[
-                'All',
-                'Control',
-                'Format',
-                'Lowercase Letter',
-                'Modifier Letter',
-                'Other Letter',
-                'Uppercase Letter',
-                'Spacing Mark',
-                'Enclosing Mark',
-                'Nonspacing Mark',
-                'Decimal Number',
-                'Letter Number',
-                'Other Number',
-                'Connector Punctuation',
-                'Dash Punctuation',
-                'Close Punctuation',
-                'Final Punctuation',
-                'Initial Punctuation',
-                'Other Punctuation',
-                'Open Punctuation',
-                'Currency Symbol',
-                'Modifier Symbol',
-                'Math Symbol',
-                'Other Symbol',
-                'Line Separator',
-                'Paragraph Separator',
-                'Space Separator',
-              ]"
-              @update:modelValue="groupByOption"
-            ></v-select>
+
+          
+          <v-col cols="6">
+            <v-row class="p-0 m-0 d-flex align-center">
+              <v-select
+                searchable
+                label="Group By Unicode Subrange Option"
+                v-model="groupSubrangeOption"
+                :disabled="!enableSubrange"
+                :items="[
+                  'All',
+                  'Control',
+                  'Format',
+                  'Lowercase Letter',
+                  'Modifier Letter',
+                  'Other Letter',
+                  'Uppercase Letter',
+                  'Spacing Mark',
+                  'Enclosing Mark',
+                  'Nonspacing Mark',
+                  'Decimal Number',
+                  'Letter Number',
+                  'Other Number',
+                  'Connector Punctuation',
+                  'Dash Punctuation',
+                  'Close Punctuation',
+                  'Final Punctuation',
+                  'Initial Punctuation',
+                  'Other Punctuation',
+                  'Open Punctuation',
+                  'Currency Symbol',
+                  'Modifier Symbol',
+                  'Math Symbol',
+                  'Other Symbol',
+                  'Line Separator',
+                  'Paragraph Separator',
+                  'Space Separator',
+                ]"
+                @update:modelValue="groupByOption"
+              ></v-select>
+            
+              <v-tooltip
+                location="top"
+                close-delay="1000"
+                width="25%"
+              >
+                <template v-slot:activator="{ props }">
+                  <v-icon
+                      v-bind="props"
+                      icon="mdi-information-outline"
+                      size="x-large"
+                      class="ml-2 mb-4"
+                  ></v-icon>
+                </template>
+                <span>
+                  "Group By Unicode Subrange Option" is only available if "Unicode Subrange" is selected in "Group By Option". For more information on character groups and what they mean, visit:
+                  <a href="https://en.wikipedia.org/wiki/Unicode_block#List_of_blocks" target="_blank">https://en.wikipedia.org/wiki/Unicode_block#List_of_blocks</a>
+                </span>
+              </v-tooltip>
+            </v-row>
           </v-col>
-          <v-col cols="1" class="text-center" style="height: 100%">
-            <v-icon
-              size="40"
-              color="white"
-              icon="mdi-information-outline"
-            ></v-icon>
-          </v-col>
+          
         </v-row>
         <v-row>
           <v-alert v-if="groupCharacterData.length === 0" type="error">
