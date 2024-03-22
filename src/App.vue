@@ -8,21 +8,18 @@
         <v-row>
           <v-col cols="6">
             <v-select
+              v-model="font"
               searchable
               label="Search For Font"
-              :items="[
-                'Font 1',
-                'Font 2',
-                'Font 3',
-                'Font 4',
-                'Font 5',
-                'Font 6',
-              ]"
+              :items="fontOptions"
             ></v-select>
           </v-col>
           <v-col cols="6">
             <v-text-field
+              v-model="searchForCharacter"
               label="Search Character By Name Or Unicode"
+              :clearable="true"
+              @update:modelValue="groupByOption"
             ></v-text-field>
           </v-col>
         </v-row>
@@ -86,7 +83,7 @@
                 'Paragraph Separator',
                 'Space Separator',
               ]"
-              @update:modelValue="groupByOptionSubrange"
+              @update:modelValue="groupByOption"
             ></v-select>
           </v-col>
           <v-col cols="1" class="text-center" style="height: 100%">
@@ -116,7 +113,8 @@
                       density="compact"
                       class="grid-buttons no-uppercase border-1"
                       @click="setCurrentCharacter(character ?? null)"
-                      @dblclick="addCharacter(character ?? null)">
+                      @dblclick="addCharacter(character ?? null)"
+                      :style="'font-family: ' + font + ';'">
                     {{ character ? character['symbol'] : ' ' }}
                   </v-btn>
                 </v-btn-group>
@@ -126,7 +124,7 @@
           <v-col>
             <v-card class="p-4">
               <v-row class="justify-center">
-                <v-card-title>
+                <v-card-title class="d-flex justify-center w-100">
                   {{ currentCharacter['@na'] ?? 'No Name Found' }}
                 </v-card-title>
               </v-row>
@@ -136,6 +134,7 @@
                     class="d-flex preview-background align-center justify-center h-100"
                   >
                     <div
+                      :style="'font-family: ' + font + ';'"
                       :class="{
                         'bold-font': bold,
                         'italicize-font': italicize,
@@ -184,7 +183,7 @@
                   </v-card-title>
                   <v-virtual-scroll
                     style="display: flex; height: 70px"
-                    :items="currentCharacter.groups"
+                    :items="currentCharacter.groupNames"
                   >
                     <template v-slot:default="{ item }">
                       {{ item }} <br />
@@ -237,6 +236,7 @@
                   hide-details
                   clearable
                   @click:clear="clearSelectedCharacters"
+                  :style="'font-family: ' + font + ';'"
                   class="mr-2 selected-characters-field"
               >
               </v-text-field>
@@ -270,6 +270,7 @@
                           rounded="0"
                           density="compact"
                           class="grid-buttons no-uppercase border-1"
+                          :style="'font-family: ' + font + ';'"
                           @click="setCurrentCharacter(character ?? null)"
                           @dblclick="addCharacter(character ?? null)">
                         {{ character ? character['symbol'] : ' ' }}
@@ -292,6 +293,7 @@
                           rounded="0"
                           density="compact"
                           class="grid-buttons no-uppercase border-1"
+                          :style="'font-family: ' + font + ';'"
                           @click="setCurrentCharacter(character ?? null)"
                           @dblclick="addCharacter(character ?? null)">
                         {{ character ? character['symbol'] : ' ' }}
@@ -398,15 +400,26 @@ export default {
           break;
       }
 
+      let search = this.searchForCharacter ?? "";
+      search = search.toLowerCase();
+      search = search.replace(/^u\+/, "");
       if ((this.groupOption != "Unicode Subrange") && (this.groupOption != "All")){
         for (let i = 0; i < this.characterData.length; i++){
-          if (this.characterData[i]['groups'].some(r=>groupString.includes(r))){
+          if (this.characterData[i]['groups'].some(r=>groupString.includes(r)) && ((this.characterData[i]['@na'] && this.characterData[i]['@na'].toLowerCase().includes(search)) || (this.characterData[i]['@cp'] && this.characterData[i]['@cp'].toLowerCase().includes(search)))){
             temp.push(this.characterData[i]);
           }
         }
         this.groupCharacterData = temp;
       }
 
+      if (this.groupOption === "All") {
+        for (let i = 0; i < this.characterData.length; i++){
+          if ((this.characterData[i]['@na'] && this.characterData[i]['@na'].toLowerCase().includes(search)) || (this.characterData[i]['@cp'] && this.characterData[i]['@cp'].toLowerCase().includes(search))) {
+            temp.push(this.characterData[i]);
+          }
+        }
+        this.groupCharacterData = temp;
+      }
     },
     groupByOptionSubrange(){
 
@@ -507,8 +520,11 @@ export default {
           break;
       }
 
+      let search = this.searchForCharacter ?? "";
+      search = search.toLowerCase();
+      search = search.replace(/^u\+/, "");
       for (let i = 0; i < this.characterData.length; i++){
-        if (this.characterData[i]['groups'].some(r=>groupString.includes(r))){
+        if (this.characterData[i]['groups'].some(r=>groupString.includes(r))  && ((this.characterData[i]['@na'] && this.characterData[i]['@na'].toLowerCase().includes(search)) || (this.characterData[i]['@cp'] && this.characterData[i]['@cp'].toLowerCase().includes(search)))){
           temp.push(this.characterData[i]);
         }
       }
@@ -578,6 +594,7 @@ export default {
             temp['@na'] = data.ucd.repertoire.group[i].char[j]['@na'];
 
             temp['groups'] = [];
+            temp['groupNames'] = [];
             const groupMap = { "Cc": "Control", "Cf": "Format", "Ll": "Lowercase Letter", "Lm": "Modifier Letter", "Lo": "Other Letter",
               "Lt": "Titlecase Letter", "Lu": "Uppercase Letter", "Mc": "Spacing Mark", "Me": "Enclosing Mark", "Mn": "Nonspacing Mark",
               "Nd": "Decimal Number", "Nl": "Letter Number", "No": "Other Number", "Pc": "Connector Punctuation", "Pd": "Dash Punctuation",
@@ -586,18 +603,23 @@ export default {
               "Zp": "Paragraph Separator", "Zs": "Space Separator"};
             if (data.ucd.repertoire.group[i].char[j]['@gc']) {
               if (data.ucd.repertoire.group[i].char[j]['@gc'] in groupMap) {
-                temp['groups'].push(groupMap[data.ucd.repertoire.group[i].char[j]['@gc']]);
+                temp['groups'].push(data.ucd.repertoire.group[i].char[j]['@gc']);
+                temp['groupNames'].push(groupMap[data.ucd.repertoire.group[i].char[j]['@gc']]);
               } else {
                 temp['groups'].push(data.ucd.repertoire.group[i].char[j]['@gc']);
+                temp['groupNames'].push(data.ucd.repertoire.group[i].char[j]['@gc']);
               }
             } else {
               if (data.ucd.repertoire.group[i]['@gc'] in groupMap) {
-                temp['groups'].push(groupMap[data.ucd.repertoire.group[i]['@gc']]);
+                temp['groups'].push(data.ucd.repertoire.group[i]['@gc']);
+                temp['groupNames'].push(groupMap[data.ucd.repertoire.group[i]['@gc']]);
               } else {
                 temp['groups'].push(data.ucd.repertoire.group[i]['@gc']);
+                temp['groupNames'].push(data.ucd.repertoire.group[i]['@gc']);
               }
             }
             temp['groups'].push(data.ucd.repertoire.group[i]['@blk']);
+            temp['groupNames'].push(data.ucd.repertoire.group[i]['@blk']);
             this.characterData.push(temp);
           }
         }
@@ -607,11 +629,15 @@ export default {
   },
   data() {
     return {
-      font: "Test1",
+      font: "Segoe UI",
       fontOptions: [
-        { text: "Test Font 1", value: "Test1" },
-        { text: "Test Font 2", value: "Test2" },
-        { text: "Test Font 3", value: "Test3" },
+        {title: "Segoe UI", value: "Segoe UI"},
+        { title: "Arial", value: "Arial" },
+        { title: "Tahoma", value: "Tahoma" },
+        { title: "Helvetica", value: "Helvetica" },
+        { title: "Georgia", value: "Georgia" },
+        { title: "Courier", value: "Courier" },
+        { title: "Comic Sans MS", value: "Comic Sans MS" },
       ],
       selectedCharacters: "",
       characterHistory: [],
@@ -619,7 +645,8 @@ export default {
         "symbol": "A",
         "@cp": "0041",
         "@na": "LATIN CAPITAL LETTER A",
-        "groups": ["Uppercase Letter", "ASCII"],
+        "groups": ["Lu", "ASCII"],
+        "groupNames": ["Uppercase Letter", "ASCII"],
         "@gc": "Lu",
       },
       bold: false,
@@ -634,6 +661,7 @@ export default {
       groupSubrangeOption: "All",
       enableSubrange: false,
       groupCharacterData: [],
+      searchForCharacter: "",
     };
   },
   mounted() {
