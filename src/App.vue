@@ -12,6 +12,7 @@
               searchable
               label="Search For Font"
               :items="fontOptions"
+              class="rounded-corners"
             ></v-autocomplete>
           </v-col>
           <v-col cols="6">
@@ -21,6 +22,7 @@
               :clearable="true"
               @click:clear="groupByOption"
               @input="handleInput"
+              class="rounded-corners"
             ></v-text-field>
           </v-col>
         </v-row>
@@ -47,6 +49,7 @@
                 'Unicode Subrange',
               ]"
               @update:modelValue="groupByOption"
+              class="rounded-corners"
             ></v-select>
           </v-col>
 
@@ -88,6 +91,7 @@
                   'Space Separator',
                 ]"
                 @update:modelValue="groupByOption"
+                class="rounded-corners"
               ></v-select>
             
               <v-tooltip
@@ -122,29 +126,31 @@
         </v-row>
         <v-row>
           <v-col class="character-grid-col" cols="7">
-            <v-virtual-scroll v-if="characterData" :items="getListAsTable(groupCharacterData, 20, 12)" style="display:flex; flex-wrap: wrap; height: 610px" class="character-grid">
-              <template class="w-100" v-slot="{ item }">
-                <v-btn-group
-                  divided
-                  rounded="0"
-                  class="w-100 h-100"
-                >
-                  <v-btn
-                      v-for="character in item"
-                      rounded="0"
-                      density="compact"
-                      class="grid-buttons no-uppercase border-1"
-                      @click="setCurrentCharacter(character ?? null)"
-                      @dblclick="addCharacter(character ?? null)"
-                      :style="'font-family: ' + font + ';'">
-                    {{ character ? character['symbol'] : ' ' }}
-                  </v-btn>
-                </v-btn-group>
-              </template>
-            </v-virtual-scroll>
+            <div class="rounded-corners">
+              <v-virtual-scroll v-if="characterData" :items="getListAsTable(groupCharacterData, 20, 12)" style="display:flex; flex-wrap: wrap; height: 610px" class="character-grid">
+                <template class="w-100" v-slot="{ item }">
+                  <v-btn-group
+                    divided
+                    rounded="0"
+                    class="w-100 h-100"
+                  >
+                    <v-btn
+                        v-for="character in item"
+                        rounded="0"
+                        density="compact"
+                        class="grid-buttons no-uppercase border-1"
+                        @click="setCurrentCharacter(character ?? null)"
+                        @dblclick="addCharacter(character ?? null)"
+                        :style="'font-family: ' + font + ';'">
+                      {{ character ? character['symbol'] : ' ' }}
+                    </v-btn>
+                  </v-btn-group>
+                </template>
+              </v-virtual-scroll>
+            </div>
           </v-col>
           <v-col>
-            <v-card class="p-4">
+            <v-card class="p-4 rounded-corners">
               <v-row class="justify-center">
                 <v-card-title class="d-flex justify-center w-100">
                   {{ currentCharacter['@na'] ?? 'No Name Found' }}
@@ -153,7 +159,7 @@
               <v-row>
                 <v-col>
                   <v-card
-                    class="d-flex preview-background align-center justify-center h-100"
+                    class="d-flex preview-background align-center justify-center h-100 rounded-corners"
                   >
                     <div
                       :style="'font-family: ' + font + ';'"
@@ -217,7 +223,7 @@
                 <v-col class="d-flex align-center justify-center">
                   <v-btn
                     text="Add to Selected Characters"
-                    class="add-button"
+                    class="add-button rounded-corners"
                     @click="addCharacter(currentCharacter)"
                   />
                 </v-col>
@@ -259,7 +265,7 @@
                   clearable
                   @click:clear="clearSelectedCharacters"
                   :style="'font-family: ' + font + ';'"
-                  class="mr-2 selected-characters-field"
+                  class="mr-2 selected-characters-field rounded-corners"
               >
               </v-text-field>
               <v-tooltip :text="copyToolTipText" location="bottom">
@@ -267,7 +273,7 @@
                   <v-btn
                       v-bind="props"
                       text="Copy"
-                      class="add-button"
+                      class="add-button rounded-corners"
                       @click="copySelectedCharacters"
                   />
                 </template>
@@ -280,49 +286,53 @@
             <v-row>
               <v-col class="mr-2">
                 <h4>Favourites</h4>
-                <v-virtual-scroll v-if="characterData" :items="getListAsTable(favourites, 10, 2)" style="display:flex; flex-wrap: wrap; height: 610px" class="character-grid">
-                  <template class="w-100" v-slot="{ item }">
-                    <v-btn-group
-                        divided
-                        rounded="0"
-                        class="w-100 h-100"
-                    >
-                      <v-btn
-                          v-for="character in item"
+                <div class="rounded-corners">
+                  <v-virtual-scroll v-if="characterData" :items="getListAsTable(favourites, 10, 3)" style="display:flex; flex-wrap: wrap; height: 250px" class="character-grid">
+                    <template class="w-100" v-slot="{ item }">
+                      <v-btn-group
+                          divided
                           rounded="0"
-                          density="compact"
-                          class="grid-buttons no-uppercase border-1"
-                          :style="'font-family: ' + font + ';'"
-                          @click="setCurrentCharacter(character ?? null)"
-                          @dblclick="addCharacter(character ?? null)">
-                        {{ character ? character['symbol'] : ' ' }}
-                      </v-btn>
-                    </v-btn-group>
-                  </template>
-                </v-virtual-scroll>
+                          class="w-100 h-100"
+                      >
+                        <v-btn
+                            v-for="character in item"
+                            rounded="0"
+                            density="compact"
+                            class="grid-buttons no-uppercase border-1"
+                            :style="'font-family: ' + font + ';'"
+                            @click="setCurrentCharacter(character ?? null)"
+                            @dblclick="addCharacter(character ?? null)">
+                          {{ character ? character['symbol'] : ' ' }}
+                        </v-btn>
+                      </v-btn-group>
+                    </template>
+                  </v-virtual-scroll>
+                </div>
               </v-col>
               <v-col class="ml-2">
                 <h4>Recents</h4>
-                <v-virtual-scroll v-if="characterData" :items="getListAsTable(characterHistory, 10, 2)" style="display:flex; flex-wrap: wrap; height: 610px" class="character-grid">
-                  <template class="w-100" v-slot="{ item }">
-                    <v-btn-group
-                        divided
-                        rounded="0"
-                        class="w-100 h-100"
-                    >
-                      <v-btn
-                          v-for="character in item"
+                <div class="rounded-corners">
+                  <v-virtual-scroll v-if="characterData" :items="getListAsTable(characterHistory, 10, 3)" style="display:flex; flex-wrap: wrap; height: 250px" class="character-grid">
+                    <template class="w-100" v-slot="{ item }">
+                      <v-btn-group
+                          divided
                           rounded="0"
-                          density="compact"
-                          class="grid-buttons no-uppercase border-1"
-                          :style="'font-family: ' + font + ';'"
-                          @click="setCurrentCharacter(character ?? null)"
-                          @dblclick="addCharacter(character ?? null)">
-                        {{ character ? character['symbol'] : ' ' }}
-                      </v-btn>
-                    </v-btn-group>
-                  </template>
-                </v-virtual-scroll>
+                          class="w-100 h-100"
+                      >
+                        <v-btn
+                            v-for="character in item"
+                            rounded="0"
+                            density="compact"
+                            class="grid-buttons no-uppercase border-1"
+                            :style="'font-family: ' + font + ';'"
+                            @click="setCurrentCharacter(character ?? null)"
+                            @dblclick="addCharacter(character ?? null)">
+                          {{ character ? character['symbol'] : ' ' }}
+                        </v-btn>
+                      </v-btn-group>
+                    </template>
+                  </v-virtual-scroll>
+                </div>
               </v-col>
             </v-row>
           </v-col>
@@ -731,6 +741,11 @@ export default {
   height: 100px;
   width: 100%;
   margin-bottom: 20px;
+}
+
+.rounded-corners {
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 .v-tooltip :deep(.v-overlay__content) {
