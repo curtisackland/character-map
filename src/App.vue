@@ -298,7 +298,7 @@
                             v-for="character in item"
                             rounded="0"
                             density="compact"
-                            class="grid-buttons no-uppercase border-1"
+                            class="grid-buttons no-uppercase border-1 favourites-recents-font-size"
                             :style="'font-family: ' + font + ';'"
                             @click="setCurrentCharacter(character ?? null)"
                             @dblclick="addCharacter(character ?? null)">
@@ -323,7 +323,7 @@
                             v-for="character in item"
                             rounded="0"
                             density="compact"
-                            class="grid-buttons no-uppercase border-1"
+                            class="grid-buttons no-uppercase border-1 favourites-recents-font-size"
                             :style="'font-family: ' + font + ';'"
                             @click="setCurrentCharacter(character ?? null)"
                             @dblclick="addCharacter(character ?? null)">
@@ -730,6 +730,10 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+
+.favourites-recents-font-size {
+  font-size: 21px;
 }
 
 .v-card-title {
