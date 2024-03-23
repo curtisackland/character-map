@@ -126,7 +126,7 @@
         </v-row>
         <v-row>
           <v-col class="character-grid-col" cols="7">
-            <div class="rounded-corners">
+            <div class="rounded-corners grid-border">
               <v-virtual-scroll v-if="characterData" :items="getListAsTable(groupCharacterData, 20, 12)" style="display:flex; flex-wrap: wrap; height: 610px" class="character-grid">
                 <template class="w-100" v-slot="{ item }">
                   <v-btn-group
@@ -286,8 +286,8 @@
             <v-row>
               <v-col class="mr-2">
                 <h4>Favourites</h4>
-                <div class="rounded-corners">
-                  <v-virtual-scroll v-if="characterData" :items="getListAsTable(favourites, 10, 3)" style="display:flex; flex-wrap: wrap; height: 250px" class="character-grid">
+                <div class="rounded-corners grid-border">
+                  <v-virtual-scroll v-if="characterData" :items="getListAsTable(favourites, 10, 3)" style="display:flex; flex-wrap: wrap; max-height: 250px" class="character-grid">
                     <template class="w-100" v-slot="{ item }">
                       <v-btn-group
                           divided
@@ -311,8 +311,8 @@
               </v-col>
               <v-col class="ml-2">
                 <h4>Recents</h4>
-                <div class="rounded-corners">
-                  <v-virtual-scroll v-if="characterData" :items="getListAsTable(characterHistory, 10, 3)" style="display:flex; flex-wrap: wrap; height: 250px" class="character-grid">
+                <div class="rounded-corners grid-border">
+                  <v-virtual-scroll v-if="characterData" :items="getListAsTable(characterHistory, 10, 3)" style="display:flex; flex-wrap: wrap; max-height: 250px" class="character-grid">
                     <template class="w-100" v-slot="{ item }">
                       <v-btn-group
                           divided
@@ -338,13 +338,15 @@
           </v-col>
         </v-row>
         <div class="snackbar-container d-flex justify-center align-bottom">
-          <v-card class="snackbar-card rounded-2 m-2 p-1 d-flex align-center justify-content-between" color="grey-darken-1">
-            <v-card-title>
-              Character added: {{ characterAddedSnackbarLetter }}
-            </v-card-title>
-            <v-btn @click="closeSnackbar()">
-              Close
-            </v-btn>
+          <v-card class="snackbar-card rounded-corners grid-border m-2 p-1" color="grey-darken-5">
+            <div class="d-flex align-center justify-content-between w-100 h-100">
+              <v-card-title class="m-2 p-0">
+                Character added: {{ characterAddedSnackbarLetter }}
+              </v-card-title>
+              <v-btn class="rounded-corners m-2" color="grey-darken-3" @click="closeSnackbar()">
+                Close
+              </v-btn>
+            </div>
           </v-card>
         </div>
       </v-container>
@@ -581,10 +583,10 @@ export default {
       this.characterAddedSnackbarLetter = character["symbol"];
       this.characterAddedSnackbarVisibility = "visible";
       this.characterAddedSnackbarLastOpen = Date.now();
-      window.setTimeout(this.closeSnackbarTimerCallback, 30000)
+      window.setTimeout(this.closeSnackbarTimerCallback, 3000)
     },
     closeSnackbarTimerCallback() {
-      if (this.characterAddedSnackbarLastOpen + 30001 < Date.now()) {
+      if (this.characterAddedSnackbarLastOpen + 3001 < Date.now()) {
         this.closeSnackbar();
       }
     },
@@ -740,6 +742,10 @@ export default {
 .rounded-corners {
   border-radius: 10px;
   overflow: hidden;
+}
+
+.grid-border {
+  outline: #3d3d3d solid 1px;
 }
 
 .v-tooltip :deep(.v-overlay__content) {
