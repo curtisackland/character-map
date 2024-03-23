@@ -338,19 +338,13 @@
           </v-col>
         </v-row>
         <div class="snackbar-container d-flex justify-center align-bottom">
-          <v-card class="snackbar-card rounded-2 w-50 m-2">
-            <v-row>
-              <v-col cols="10">
-                <v-card-title>
-                  Character added: {{ characterAddedSnackbarLetter }}
-                </v-card-title>
-              </v-col>
-              <v-col cols="2">
-                <v-btn class="m-1" @click="closeSnackbar()">
-                  Close
-                </v-btn>
-              </v-col>
-            </v-row>
+          <v-card class="snackbar-card rounded-2 m-2 p-1 d-flex align-center justify-content-between" color="grey-darken-1">
+            <v-card-title>
+              Character added: {{ characterAddedSnackbarLetter }}
+            </v-card-title>
+            <v-btn @click="closeSnackbar()">
+              Close
+            </v-btn>
           </v-card>
         </div>
       </v-container>
@@ -587,10 +581,10 @@ export default {
       this.characterAddedSnackbarLetter = character["symbol"];
       this.characterAddedSnackbarVisibility = "visible";
       this.characterAddedSnackbarLastOpen = Date.now();
-      window.setTimeout(this.closeSnackbarTimerCallback, 3000)
+      window.setTimeout(this.closeSnackbarTimerCallback, 30000)
     },
     closeSnackbarTimerCallback() {
-      if (this.characterAddedSnackbarLastOpen + 3001 < Date.now()) {
+      if (this.characterAddedSnackbarLastOpen + 30001 < Date.now()) {
         this.closeSnackbar();
       }
     },
@@ -813,9 +807,10 @@ export default {
 }
 
 .snackbar-card {
-  height: 3em;
+  height: 4em;
   pointer-events: initial;
   visibility: v-bind(characterAddedSnackbarVisibility);
+  width: 400px;
 }
 
 .character-grid-col {
