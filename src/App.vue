@@ -116,8 +116,8 @@
           </v-col>
           
         </v-row>
-        <v-row class="mb-2 p-2">
-          <v-alert v-if="groupCharacterData.length === 0" type="error" icon="none">
+        <v-row v-if="groupCharacterData.length === 0" class="mb-2 p-2">
+          <v-alert type="error" icon="none">
             No results
           </v-alert>
         </v-row>
