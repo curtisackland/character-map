@@ -1,16 +1,18 @@
-# character-map
+# Character Map
 
-## Project setup
+This is a redesign of Microsoft Windows' Character Map.
+
+## Running the application
+
+Place the ```character_data.json``` file under the ```src``` directory.
+
+Then run:
 ```
 npm install
 ```
 
-### Compiles and hot-reloads for development
 ```
 npm run serve
 ```
 
-### Compiles and minifies for production
-```
-npm run build
-```
+This should host the app on your machine and give you a localhost address to access the application with.
