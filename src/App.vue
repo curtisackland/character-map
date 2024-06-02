@@ -623,46 +623,7 @@ export default {
       }
     },
     async getCharacters() {
-      for (let i = 0; i < data.ucd.repertoire.group.length; i++) {
-        if (data.ucd.repertoire.group[i].char) {
-          for (let j = 0; j < data.ucd.repertoire.group[i].char.length; j++) {
-            let temp = {};
-            temp['@cp'] = data.ucd.repertoire.group[i].char[j]['@cp'];
-            temp['symbol'] = String.fromCharCode(parseInt(data.ucd.repertoire.group[i].char[j]['@cp'], 16));
-            temp['@ks'] = data.ucd.repertoire.group[i].char[j]['@ks'];
-            temp['@na'] = data.ucd.repertoire.group[i].char[j]['@na'];
-
-            temp['groups'] = [];
-            temp['groupNames'] = [];
-            const groupMap = { "Cc": "Control", "Cf": "Format", "Ll": "Lowercase Letter", "Lm": "Modifier Letter", "Lo": "Other Letter",
-              "Lt": "Titlecase Letter", "Lu": "Uppercase Letter", "Mc": "Spacing Mark", "Me": "Enclosing Mark", "Mn": "Nonspacing Mark",
-              "Nd": "Decimal Number", "Nl": "Letter Number", "No": "Other Number", "Pc": "Connector Punctuation", "Pd": "Dash Punctuation",
-              "Pe": "Close Punctuation", "Pf": "Final Punctuation", "Pi": "Initial Punctuation", "Po": "Other Punctuation", "Ps": "Open Punctuation",
-              "Sc": "Currency Symbol", "Sk": "Modifier Symbol", "Sm": "Math Symbol", "So": "Other Symbol", "Zl": "Line Separator",
-              "Zp": "Paragraph Separator", "Zs": "Space Separator"};
-            if (data.ucd.repertoire.group[i].char[j]['@gc']) {
-              if (data.ucd.repertoire.group[i].char[j]['@gc'] in groupMap) {
-                temp['groups'].push(data.ucd.repertoire.group[i].char[j]['@gc']);
-                temp['groupNames'].push(groupMap[data.ucd.repertoire.group[i].char[j]['@gc']]);
-              } else {
-                temp['groups'].push(data.ucd.repertoire.group[i].char[j]['@gc']);
-                temp['groupNames'].push(data.ucd.repertoire.group[i].char[j]['@gc']);
-              }
-            } else {
-              if (data.ucd.repertoire.group[i]['@gc'] in groupMap) {
-                temp['groups'].push(data.ucd.repertoire.group[i]['@gc']);
-                temp['groupNames'].push(groupMap[data.ucd.repertoire.group[i]['@gc']]);
-              } else {
-                temp['groups'].push(data.ucd.repertoire.group[i]['@gc']);
-                temp['groupNames'].push(data.ucd.repertoire.group[i]['@gc']);
-              }
-            }
-            temp['groups'].push(data.ucd.repertoire.group[i]['@blk']);
-            temp['groupNames'].push(data.ucd.repertoire.group[i]['@blk']);
-            this.characterData.push(temp);
-          }
-        }
-      }
+      this.characterData = data;
       this.groupCharacterData = this.characterData;
     },
     handleInput() {
